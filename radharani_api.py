@@ -4,8 +4,19 @@ import time
 import requests
 
 
-def get_json(Origin, Destination, isreturn, FlightClass, DepartDate, ReturnDate, Adult, Child, Infant, hashId):
-    ls = []
+def get_json(param_json, hashId):
+    Origin = param_json['origin']
+    Destination = param_json['destination']
+    isreturn = param_json['isreturn']
+    FlightClass = param_json['FlightClass']
+    DepartDate = param_json['depart_date']
+    ReturnDate = param_json['ReturnDate']
+    Adult = param_json['adult']
+    Child = param_json['child']
+    Infant = param_json['infant']
+    # Domain = param_json['domain']
+
+    ls = {"results":list()}
     api_response = []
     if isreturn.lower() == "yes":
         if FlightClass.lower() == "economy":
@@ -28,7 +39,7 @@ def get_json(Origin, Destination, isreturn, FlightClass, DepartDate, ReturnDate,
             'connection': 'keep-alive',
             'content-length': '1146',
             'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-            'cookie': 'JSESSIONID=D55315A521606D3AC4F9ABA2FCB66CA1',
+            'cookie': 'JSESSIONID=FF4F9696A52BCABFB87BC936E532FC5D',
             'host': 'www.makevoyage.com',
             'origin': 'https://www.makevoyage.com',
             'referer': f'https://www.makevoyage.com/flight_roundTrip_search_new.jsp?fromFlight={Origin}&toFlight={Destination}&departureDateFlight={DepartDate}&arrivalDateFlight={ReturnDate}&adultFlight={Adult}&childFlight={Child}&infantFlight={Infant}&journyType={isreturn}&lat1=undefined&longi1=undefined&lat2=undefined&longi2=undefined&prefairline=All&pclass={FlightClass}&searchtype=domestic&lg=English&refundtype=All&layovertime=&apa=&directflights=false&defenceflight=false&studentflight=false&personalbooking=no',
@@ -55,7 +66,7 @@ def get_json(Origin, Destination, isreturn, FlightClass, DepartDate, ReturnDate,
                 'connection': 'keep-alive',
                 'content-length': '1147',
                 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-                'cookie': 'JSESSIONID=D55315A521606D3AC4F9ABA2FCB66CA1',
+                'cookie': 'JSESSIONID=FF4F9696A52BCABFB87BC936E532FC5D',
                 'host': 'www.makevoyage.com',
                 'origin': 'https://www.makevoyage.com',
                 'referer': f'https://www.makevoyage.com/flight_roundTrip_search_new.jsp?fromFlight={Origin}&toFlight={Destination}&departureDateFlight={DepartDate}&arrivalDateFlight={ReturnDate}&adultFlight={Adult}&childFlight={Child}&infantFlight={Infant}&journyType={isreturn}&lat1=undefined&longi1=undefined&lat2=undefined&longi2=undefined&prefairline=All&pclass={FlightClass}&searchtype=international&lg=English&refundtype=All&layovertime=&apa=&directflights=false&defenceflight=false&studentflight=false&personalbooking=no',
@@ -75,133 +86,134 @@ def get_json(Origin, Destination, isreturn, FlightClass, DepartDate, ReturnDate,
             for data in json_data['flightsearchresponse']['flightjourneys']:
                 for info in data['flightoptions']:
                     for details in info['recommendedflight']:
-                        result = {"result": [{"Price_per_seat": {}, "flight_data": {}, "Domain": {}}]}
+                        result = {"Departure_Sector": None, "Arrival_Sector": None,
+                                  "Airlines": None, "Flight_number": None,
+                                  "No_of_stops": None, "Departure_Date": None,
+                                  "Departure_Time": None, "Arrival_Date": None,
+                                  "Arrival_Time": None, "No_of_available_seats": None,
+                                  "Price_per_seat": {}, "Domain": {}}
 
-                        result['result'][0]['Price_per_seat']['adult'] = details['flightfare']['adultbasefare']
-                        result['result'][0]['Price_per_seat']['child'] = details['flightfare']['childbasefare']
-                        result['result'][0]['Price_per_seat']['infant'] = details['flightfare']['infantbasefare']
-                        result['result'][0]['Domain'] = "travelsansaar"
+                        # result.Price_per_seat
+                        result['Price_per_seat']['adult'] = details['flightfare']['adultbasefare']
+                        result['Price_per_seat']['child'] = details['flightfare']['childbasefare']
+                        result['Price_per_seat']['infant'] = details['flightfare']['infantbasefare']
+                        result['Domain'] = "travelsansaar"
 
                         for main_data in details['flightlegs']:
 
                             try:
-                                result['result'][0]['flight_data']['Departure_Sector'] = main_data['origin_name']
+                                result['Departure_Sector'] = main_data['origin_name']
                             except:
-                                result['result'][0]['flight_data']['Departure_Sector'] = ''
+                                result['Departure_Sector'] = ''
                             try:
-                                result['result'][0]['flight_data']['Arrival_Sector'] = main_data['destination_name']
+                                result['Arrival_Sector'] = main_data['destination_name']
                             except:
-                                result['result'][0]['flight_data']['Arrival_Sector'] = ''
+                                result['Arrival_Sector'] = ''
                             try:
-                                result['result'][0]['flight_data']['Airlines'] = main_data['carriername']
+                                result['Airlines'] = main_data['carriername']
                             except:
-                                result['result'][0]['flight_data']['Airlines'] = ''
+                                result['Airlines'] = ''
                             try:
-                                result['result'][0]['flight_data']['Flight_number'] = main_data['flightnumber']
+                                result['Flight_number'] = main_data['flightnumber']
                             except:
-                                result['result'][0]['flight_data']['Flight_number'] = ''
+                                result['Flight_number'] = ''
                             try:
-                                result['result'][0]['flight_data']['No_of_stops'] = main_data['stopover']
+                                result['No_of_stops'] = main_data['stopover']
                             except:
-                                result['result'][0]['flight_data']['No_of_stops'] = ''
+                                result['No_of_stops'] = ''
                             try:
-                                result['result'][0]['flight_data']['Departure_Date'] = main_data['depdate']
+                                result['Departure_Date'] = main_data['depdate']
                             except:
-                                result['result'][0]['flight_data']['Departure_Date'] = ''
+                                result['Departure_Date'] = ''
                             try:
-                                result['result'][0]['flight_data']['Departure_Time'] = main_data['deptime']
+                                result['Departure_Time'] = main_data['deptime']
                             except:
-                                result['result'][0]['flight_data']['Departure_Time'] = ''
+                                result['Departure_Time'] = ''
                             try:
-                                result['result'][0]['flight_data']['Arrival_Date'] = main_data['arrdate']
+                                result['Arrival_Date'] = main_data['arrdate']
                             except:
-                                result['result'][0]['flight_data']['Arrival_Date'] = ''
+                                result['Arrival_Date'] = ''
                             try:
-                                result['result'][0]['flight_data']['Arrival_Time'] = main_data['arrtime']
+                                result['Arrival_Time'] = main_data['arrtime']
                             except:
-                                result['result'][0]['flight_data']['Arrival_Time'] = ''
+                                result['Arrival_Time'] = ''
                             try:
-                                result['result'][0]['flight_data']['No_of_available_seats'] = main_data[
-                                    'numseatsavailable']
+                                result['No_of_available_seats'] = main_data['numseatsavailable']
                             except:
-                                result['result'][0]['flight_data']['No_of_available_seats'] = ''
+                                result['No_of_available_seats'] = ''
 
-                            api_response.append(result)
+                            ls['results'].append(result)
 
-                        for i in api_response:
-                            if i in ls:
-                                continue
-                            else:
-                                ls.append(result)
-            return ls
+                return ls
 
 
 
 
 
-        # flightsearchresponse.flightjourneys[0].flightoptions[9].recommendedflight[0].flightlegs
+        # flightsearchresponse.flightjourneys.flightoptions[9].recommendedflight.flightlegs
         else:
             for data in json_data['flightsearchresponse']['flightjourneys']:
                 for info in data['flightoptions']:
                     for details in info['recommendedflight']:
-                        result = {"result": [{"Price_per_seat": {}, "flight_data": {}, "Domain": {}}]}
+                        result = {"Departure_Sector": None, "Arrival_Sector": None,
+                                  "Airlines": None, "Flight_number": None,
+                                  "No_of_stops": None, "Departure_Date": None,
+                                  "Departure_Time": None, "Arrival_Date": None,
+                                  "Arrival_Time": None, "No_of_available_seats": None,
+                                  "Price_per_seat": {}, "Domain": {}}
 
-                        result['result'][0]['Price_per_seat']['adult'] = details['flightfare']['adultbasefare']
-                        result['result'][0]['Price_per_seat']['child'] = details['flightfare']['childbasefare']
-                        result['result'][0]['Price_per_seat']['infant'] = details['flightfare']['infantbasefare']
-                        result['result'][0]['Domain'] = "travelsansaar"
+                        # result.Price_per_seat
+                        result['Price_per_seat']['adult'] = details['flightfare']['adultbasefare']
+                        result['Price_per_seat']['child'] = details['flightfare']['childbasefare']
+                        result['Price_per_seat']['infant'] = details['flightfare']['infantbasefare']
+                        result['Domain'] = "travelsansaar"
 
                         for main_data in details['flightlegs']:
 
                             try:
-                                result['result'][0]['flight_data']['Departure_Sector'] = main_data['origin_name']
+                                result['Departure_Sector'] = main_data['origin_name']
                             except:
-                                result['result'][0]['flight_data']['Departure_Sector'] = ''
+                                result['Departure_Sector'] = ''
                             try:
-                                result['result'][0]['flight_data']['Arrival_Sector'] = main_data['destination_name']
+                                result['Arrival_Sector'] = main_data['destination_name']
                             except:
-                                result['result'][0]['flight_data']['Arrival_Sector'] = ''
+                                result['Arrival_Sector'] = ''
                             try:
-                                result['result'][0]['flight_data']['Airlines'] = main_data['carriername']
+                                result['Airlines'] = main_data['carriername']
                             except:
-                                result['result'][0]['flight_data']['Airlines'] = ''
+                                result['Airlines'] = ''
                             try:
-                                result['result'][0]['flight_data']['Flight_number'] = main_data['flightnumber']
+                                result['Flight_number'] = main_data['flightnumber']
                             except:
-                                result['result'][0]['flight_data']['Flight_number'] = ''
+                                result['Flight_number'] = ''
                             try:
-                                result['result'][0]['flight_data']['No_of_stops'] = main_data['stopover']
+                                result['No_of_stops'] = main_data['stopover']
                             except:
-                                result['result'][0]['flight_data']['No_of_stops'] = ''
+                                result['No_of_stops'] = ''
                             try:
-                                result['result'][0]['flight_data']['Departure_Date'] = main_data['depdate']
+                                result['Departure_Date'] = main_data['depdate']
                             except:
-                                result['result'][0]['flight_data']['Departure_Date'] = ''
+                                result['Departure_Date'] = ''
                             try:
-                                result['result'][0]['flight_data']['Departure_Time'] = main_data['deptime']
+                                result['Departure_Time'] = main_data['deptime']
                             except:
-                                result['result'][0]['flight_data']['Departure_Time'] = ''
+                                result['Departure_Time'] = ''
                             try:
-                                result['result'][0]['flight_data']['Arrival_Date'] = main_data['arrdate']
+                                result['Arrival_Date'] = main_data['arrdate']
                             except:
-                                result['result'][0]['flight_data']['Arrival_Date'] = ''
+                                result['Arrival_Date'] = ''
                             try:
-                                result['result'][0]['flight_data']['Arrival_Time'] = main_data['arrtime']
+                                result['Arrival_Time'] = main_data['arrtime']
                             except:
-                                result['result'][0]['flight_data']['Arrival_Time'] = ''
+                                result['Arrival_Time'] = ''
                             try:
-                                result['result'][0]['flight_data']['No_of_available_seats'] = main_data[
-                                    'numseatsavailable']
+                                result['No_of_available_seats'] = main_data['numseatsavailable']
                             except:
-                                result['result'][0]['flight_data']['No_of_available_seats'] = ''
+                                result['No_of_available_seats'] = ''
 
-                                api_response.append(result)
-                        for i in api_response:
-                            if i in ls:
-                                continue
-                            else:
-                                ls.append(result)
-            return ls
+                            ls['results'].append(result)
+
+                return ls
 
 
 
@@ -226,7 +238,7 @@ def get_json(Origin, Destination, isreturn, FlightClass, DepartDate, ReturnDate,
             'connection': 'keep-alive',
             'content-length': '1134',
             'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-            'cookie': 'JSESSIONID=1C09455FEADCDCEA14F6E5BFE7280191',
+            'cookie': 'JSESSIONID=FF4F9696A52BCABFB87BC936E532FC5D',
             'host': 'www.makevoyage.com',
             'origin': 'https://www.makevoyage.com',
             'referer': f'https://www.makevoyage.com/flight_result_new.jsp?fromFlight={Origin}&toFlight={Destination}&departureDateFlight={DepartDate}&arrivalDateFlight={ReturnDate}&adultFlight={Adult}&childFlight={Child}&infantFlight={Infant}&journyType={isreturn}&lat1=undefined&longi1=undefined&lat2=undefined&longi2=undefined&prefairline=All&pclass={FlightClass}&searchtype=international&lg=English&refundtype=All&layovertime=&apa=&storelogs=false&directflights=false&defenceflight=false&studentflight=false&personalbooking=no',
@@ -254,7 +266,7 @@ def get_json(Origin, Destination, isreturn, FlightClass, DepartDate, ReturnDate,
                 'connection': 'keep-alive',
                 'content-length': '1133',
                 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-                'cookie': 'JSESSIONID=1C09455FEADCDCEA14F6E5BFE7280191',
+                'cookie': 'JSESSIONID=FF4F9696A52BCABFB87BC936E532FC5D',
                 'host': 'www.makevoyage.com',
                 'origin': 'https://www.makevoyage.com',
                 'referer': f'https://www.makevoyage.com/flight_result_new.jsp?fromFlight={Origin}&toFlight={Destination}&departureDateFlight={DepartDate}&arrivalDateFlight={ReturnDate}&adultFlight={Adult}&childFlight={Child}&infantFlight={Infant}&journyType={isreturn}&lat1=undefined&longi1=undefined&lat2=undefined&longi2=undefined&prefairline=All&pclass={FlightClass}&searchtype=domestic&lg=English&refundtype=All&layovertime=&apa=&storelogs=false&directflights=false&defenceflight=false&studentflight=false&personalbooking=no',
@@ -276,134 +288,148 @@ def get_json(Origin, Destination, isreturn, FlightClass, DepartDate, ReturnDate,
                 for info in data['flightoptions']:
                     for details in info['recommendedflight']:
 
-                        result = {"result": [{"Price_per_seat": {}, "flight_data": {}, "Domain": {}}]}
+                        result = {"Departure_Sector": None, "Arrival_Sector": None,
+                                  "Airlines": None, "Flight_number": None,
+                                  "No_of_stops": None, "Departure_Date": None,
+                                  "Departure_Time": None, "Arrival_Date": None,
+                                  "Arrival_Time": None, "No_of_available_seats": None,
+                                  "Price_per_seat": {}, "Domain": {}}
 
-                        result['result'][0]['Price_per_seat']['adult'] = details['flightfare']['adultbasefare']
-                        result['result'][0]['Price_per_seat']['child'] = details['flightfare']['childbasefare']
-                        result['result'][0]['Price_per_seat']['infant'] = details['flightfare']['infantbasefare']
-                        result['result'][0]['Domain'] = "travelsansaar"
+                        # result.Price_per_seat
+                        result['Price_per_seat']['adult'] = details['flightfare']['adultbasefare']
+                        result['Price_per_seat']['child'] = details['flightfare']['childbasefare']
+                        result['Price_per_seat']['infant'] = details['flightfare']['infantbasefare']
+                        result['Domain'] = "travelsansaar"
 
                         for main_data in details['flightlegs']:
 
                             try:
-                                result['result'][0]['flight_data']['Departure_Sector'] = main_data['origin_name']
+                                result['Departure_Sector'] = main_data['origin_name']
                             except:
-                                result['result'][0]['flight_data']['Departure_Sector'] = ''
+                                result['Departure_Sector'] = ''
                             try:
-                                result['result'][0]['flight_data']['Arrival_Sector'] = main_data['destination_name']
+                                result['Arrival_Sector'] = main_data['destination_name']
                             except:
-                                result['result'][0]['flight_data']['Arrival_Sector'] = ''
+                                result['Arrival_Sector'] = ''
                             try:
-                                result['result'][0]['flight_data']['Airlines'] = main_data['carriername']
+                                result['Airlines'] = main_data['carriername']
                             except:
-                                result['result'][0]['flight_data']['Airlines'] = ''
+                                result['Airlines'] = ''
                             try:
-                                result['result'][0]['flight_data']['Flight_number'] = main_data['flightnumber']
+                                result['Flight_number'] = main_data['flightnumber']
                             except:
-                                result['result'][0]['flight_data']['Flight_number'] = ''
+                                result['Flight_number'] = ''
                             try:
-                                result['result'][0]['flight_data']['No_of_stops'] = main_data['stopover']
+                                result['No_of_stops'] = main_data['stopover']
                             except:
-                                result['result'][0]['flight_data']['No_of_stops'] = ''
+                                result['No_of_stops'] = ''
                             try:
-                                result['result'][0]['flight_data']['Departure_Date'] = main_data['depdate']
+                                result['Departure_Date'] = main_data['depdate']
                             except:
-                                result['result'][0]['flight_data']['Departure_Date'] = ''
+                                result['Departure_Date'] = ''
                             try:
-                                result['result'][0]['flight_data']['Departure_Time'] = main_data['deptime']
+                                result['Departure_Time'] = main_data['deptime']
                             except:
-                                result['result'][0]['flight_data']['Departure_Time'] = ''
+                                result['Departure_Time'] = ''
                             try:
-                                result['result'][0]['flight_data']['Arrival_Date'] = main_data['arrdate']
+                                result['Arrival_Date'] = main_data['arrdate']
                             except:
-                                result['result'][0]['flight_data']['Arrival_Date'] = ''
+                                result['Arrival_Date'] = ''
                             try:
-                                result['result'][0]['flight_data']['Arrival_Time'] = main_data['arrtime']
+                                result['Arrival_Time'] = main_data['arrtime']
                             except:
-                                result['result'][0]['flight_data']['Arrival_Time'] = ''
+                                result['Arrival_Time'] = ''
                             try:
-                                result['result'][0]['flight_data']['No_of_available_seats'] = main_data[
-                                    'numseatsavailable']
+                                result['No_of_available_seats'] = main_data['numseatsavailable']
                             except:
-                                result['result'][0]['flight_data']['No_of_available_seats'] = ''
+                                result['No_of_available_seats'] = ''
 
-                                api_response.append(result)
-
-                                for i in api_response:
-                                    if i in ls:
-                                        continue
-                                    else:
-                                        ls.append(result)
-                    return ls
+                            ls['results'].append(result)
+                return ls
 
 
         else:
             for data in json_data['flightsearchresponse']['flightjourneys']:
                 for info in data['flightoptions']:
                     for details in info['recommendedflight']:
-                        result = {"result": [{"Price_per_seat": {}, "flight_data": {}, "Domain": {}}]}
+                        result = {"Departure_Sector": None, "Arrival_Sector": None,
+                                               "Airlines": None, "Flight_number": None,
+                                               "No_of_stops": None, "Departure_Date": None,
+                                               "Departure_Time": None, "Arrival_Date": None,
+                                               "Arrival_Time": None, "No_of_available_seats": None,
+                                               "Price_per_seat": {}, "Domain": {}}
 
-                        # result[0].Price_per_seat
-
-                        result['result'][0]['Price_per_seat']['adult'] = details['flightfare']['adultbasefare']
-                        result['result'][0]['Price_per_seat']['child'] = details['flightfare']['childbasefare']
-                        result['result'][0]['Price_per_seat']['infant'] = details['flightfare']['infantbasefare']
-                        result['result'][0]['Domain'] = "travelsansaar"
+                        # result.Price_per_seat
+                        result['Price_per_seat']['adult'] = details['flightfare']['adultbasefare']
+                        result['Price_per_seat']['child'] = details['flightfare']['childbasefare']
+                        result['Price_per_seat']['infant'] = details['flightfare']['infantbasefare']
+                        result['Domain'] = "travelsansaar"
 
                         for main_data in details['flightlegs']:
 
                             try:
-                                result['result'][0]['flight_data']['Departure_Sector'] = main_data['origin_name']
+                                result['Departure_Sector'] = main_data['origin_name']
                             except:
-                                result['result'][0]['flight_data']['Departure_Sector'] = ''
+                                result['Departure_Sector'] = ''
                             try:
-                                result['result'][0]['flight_data']['Arrival_Sector'] = main_data['destination_name']
+                                result['Arrival_Sector'] = main_data['destination_name']
                             except:
-                                result['result'][0]['flight_data']['Arrival_Sector'] = ''
+                                result['Arrival_Sector'] = ''
                             try:
-                                result['result'][0]['flight_data']['Airlines'] = main_data['carriername']
+                                result['Airlines'] = main_data['carriername']
                             except:
-                                result['result'][0]['flight_data']['Airlines'] = ''
+                                result['Airlines'] = ''
                             try:
-                                result['result'][0]['flight_data']['Flight_number'] = main_data['flightnumber']
+                                result['Flight_number'] = main_data['flightnumber']
                             except:
-                                result['result'][0]['flight_data']['Flight_number'] = ''
+                                result['Flight_number'] = ''
                             try:
-                                result['result'][0]['flight_data']['No_of_stops'] = main_data['stopover']
+                                result['No_of_stops'] = main_data['stopover']
                             except:
-                                result['result'][0]['flight_data']['No_of_stops'] = ''
+                                result['No_of_stops'] = ''
                             try:
-                                result['result'][0]['flight_data']['Departure_Date'] = main_data['depdate']
+                                result['Departure_Date'] = main_data['depdate']
                             except:
-                                result['result'][0]['flight_data']['Departure_Date'] = ''
+                                result['Departure_Date'] = ''
                             try:
-                                result['result'][0]['flight_data']['Departure_Time'] = main_data['deptime']
+                                result['Departure_Time'] = main_data['deptime']
                             except:
-                                result['result'][0]['flight_data']['Departure_Time'] = ''
+                                result['Departure_Time'] = ''
                             try:
-                                result['result'][0]['flight_data']['Arrival_Date'] = main_data['arrdate']
+                                result['Arrival_Date'] = main_data['arrdate']
                             except:
-                                result['result'][0]['flight_data']['Arrival_Date'] = ''
+                                result['Arrival_Date'] = ''
                             try:
-                                result['result'][0]['flight_data']['Arrival_Time'] = main_data['arrtime']
+                                result['Arrival_Time'] = main_data['arrtime']
                             except:
-                                result['result'][0]['flight_data']['Arrival_Time'] = ''
+                                result['Arrival_Time'] = ''
                             try:
-                                result['result'][0]['flight_data']['No_of_available_seats'] = main_data[
-                                    'numseatsavailable']
+                                result['No_of_available_seats'] = main_data['numseatsavailable']
                             except:
-                                result['result'][0]['flight_data']['No_of_available_seats'] = ''
+                                result['No_of_available_seats'] = ''
 
-                            api_response.append(result)
+                            ls['results'].append(result)
 
-                            for i in api_response:
-                                if i in ls:
-                                    continue
-                                else:
-                                    ls.append(result)
                 return ls
 
 
+
+
+
 if __name__ == '__main__':
-    data = get_json("AMD", "DXB", "no", "economy", "2022-09-03", "2022-09-03", 1, 1, 1, 12345)
+    # data = get_json("AMD", "DXB", "yes", "economy", "2022-09-03", "2022-09-23", 1, 1, 1, 12345)
+    param_json = {
+        "origin": "AMD",
+        "destination": "BOM",
+        "isreturn": "no",
+        "FlightClass": "economy",
+        "depart_date": "2022-09-02",  # "01-09-2022"
+        "ReturnDate": "2022-09-02",
+        "adult": "1",
+        "child": "1",
+        "infant": "1",
+
+    }
+
+    data = (get_json(param_json,12345))
     print(json.dumps(data))
