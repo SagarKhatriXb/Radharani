@@ -39,7 +39,7 @@ def get_json(param_json, hashId):
             'connection': 'keep-alive',
             'content-length': '1146',
             'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-            'cookie': 'JSESSIONID=FF4F9696A52BCABFB87BC936E532FC5D',
+            'cookie': 'JSESSIONID=791F06041088C4A16DF4C8679352556D',
             'host': 'www.makevoyage.com',
             'origin': 'https://www.makevoyage.com',
             'referer': f'https://www.makevoyage.com/flight_roundTrip_search_new.jsp?fromFlight={Origin}&toFlight={Destination}&departureDateFlight={DepartDate}&arrivalDateFlight={ReturnDate}&adultFlight={Adult}&childFlight={Child}&infantFlight={Infant}&journyType={isreturn}&lat1=undefined&longi1=undefined&lat2=undefined&longi2=undefined&prefairline=All&pclass={FlightClass}&searchtype=domestic&lg=English&refundtype=All&layovertime=&apa=&directflights=false&defenceflight=false&studentflight=false&personalbooking=no',
@@ -66,7 +66,7 @@ def get_json(param_json, hashId):
                 'connection': 'keep-alive',
                 'content-length': '1147',
                 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-                'cookie': 'JSESSIONID=FF4F9696A52BCABFB87BC936E532FC5D',
+                'cookie': 'JSESSIONID=791F06041088C4A16DF4C8679352556D',
                 'host': 'www.makevoyage.com',
                 'origin': 'https://www.makevoyage.com',
                 'referer': f'https://www.makevoyage.com/flight_roundTrip_search_new.jsp?fromFlight={Origin}&toFlight={Destination}&departureDateFlight={DepartDate}&arrivalDateFlight={ReturnDate}&adultFlight={Adult}&childFlight={Child}&infantFlight={Infant}&journyType={isreturn}&lat1=undefined&longi1=undefined&lat2=undefined&longi2=undefined&prefairline=All&pclass={FlightClass}&searchtype=international&lg=English&refundtype=All&layovertime=&apa=&directflights=false&defenceflight=false&studentflight=false&personalbooking=no',
@@ -94,10 +94,10 @@ def get_json(param_json, hashId):
                                   "Price_per_seat": {}, "Domain": {}}
 
                         # result.Price_per_seat
-                        result['Price_per_seat']['adult'] = details['flightfare']['adultbasefare']
-                        result['Price_per_seat']['child'] = details['flightfare']['childbasefare']
-                        result['Price_per_seat']['infant'] = details['flightfare']['infantbasefare']
-                        result['Domain'] = "travelsansaar"
+                        result['Price_per_seat']['adult'] = str(details['flightfare']['adultbasefare'])
+                        result['Price_per_seat']['child'] = str(details['flightfare']['childbasefare'])
+                        result['Price_per_seat']['infant'] = str(details['flightfare']['infantbasefare'])
+                        result['Domain'] = "makevoyage"
 
                         for main_data in details['flightlegs']:
 
@@ -138,7 +138,7 @@ def get_json(param_json, hashId):
                             except:
                                 result['Arrival_Time'] = ''
                             try:
-                                result['No_of_available_seats'] = main_data['numseatsavailable']
+                                result['No_of_available_seats'] = str(main_data['numseatsavailable'])
                             except:
                                 result['No_of_available_seats'] = ''
 
@@ -163,10 +163,10 @@ def get_json(param_json, hashId):
                                   "Price_per_seat": {}, "Domain": {}}
 
                         # result.Price_per_seat
-                        result['Price_per_seat']['adult'] = details['flightfare']['adultbasefare']
-                        result['Price_per_seat']['child'] = details['flightfare']['childbasefare']
-                        result['Price_per_seat']['infant'] = details['flightfare']['infantbasefare']
-                        result['Domain'] = "travelsansaar"
+                        result['Price_per_seat']['adult'] = str(details['flightfare']['adultbasefare'])
+                        result['Price_per_seat']['child'] = str(details['flightfare']['childbasefare'])
+                        result['Price_per_seat']['infant'] = str(details['flightfare']['infantbasefare'])
+                        result['Domain'] = "makevoyage"
 
                         for main_data in details['flightlegs']:
 
@@ -207,7 +207,7 @@ def get_json(param_json, hashId):
                             except:
                                 result['Arrival_Time'] = ''
                             try:
-                                result['No_of_available_seats'] = main_data['numseatsavailable']
+                                result['No_of_available_seats'] = str(main_data['numseatsavailable'])
                             except:
                                 result['No_of_available_seats'] = ''
 
@@ -238,7 +238,7 @@ def get_json(param_json, hashId):
             'connection': 'keep-alive',
             'content-length': '1134',
             'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-            'cookie': 'JSESSIONID=FF4F9696A52BCABFB87BC936E532FC5D',
+            'cookie': 'JSESSIONID=791F06041088C4A16DF4C8679352556D',
             'host': 'www.makevoyage.com',
             'origin': 'https://www.makevoyage.com',
             'referer': f'https://www.makevoyage.com/flight_result_new.jsp?fromFlight={Origin}&toFlight={Destination}&departureDateFlight={DepartDate}&arrivalDateFlight={ReturnDate}&adultFlight={Adult}&childFlight={Child}&infantFlight={Infant}&journyType={isreturn}&lat1=undefined&longi1=undefined&lat2=undefined&longi2=undefined&prefairline=All&pclass={FlightClass}&searchtype=international&lg=English&refundtype=All&layovertime=&apa=&storelogs=false&directflights=false&defenceflight=false&studentflight=false&personalbooking=no',
@@ -252,7 +252,14 @@ def get_json(param_json, hashId):
             'x-requested-with': 'XMLHttpRequest'
         }
 
-        response = requests.request("POST", url, headers=headers, data=payload)
+        # response = requests.request("POST", url, headers=headers, data=payload)
+
+        s = requests.Session()
+        # all cookies received will be stored in the session object
+
+        response = s.post(url, headers=headers, data=payload)
+
+        # json_data = json.loads(response.text)
 
         json_data = json.loads(response.text)
 
@@ -266,7 +273,7 @@ def get_json(param_json, hashId):
                 'connection': 'keep-alive',
                 'content-length': '1133',
                 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-                'cookie': 'JSESSIONID=FF4F9696A52BCABFB87BC936E532FC5D',
+                'cookie': 'JSESSIONID=791F06041088C4A16DF4C8679352556D',
                 'host': 'www.makevoyage.com',
                 'origin': 'https://www.makevoyage.com',
                 'referer': f'https://www.makevoyage.com/flight_result_new.jsp?fromFlight={Origin}&toFlight={Destination}&departureDateFlight={DepartDate}&arrivalDateFlight={ReturnDate}&adultFlight={Adult}&childFlight={Child}&infantFlight={Infant}&journyType={isreturn}&lat1=undefined&longi1=undefined&lat2=undefined&longi2=undefined&prefairline=All&pclass={FlightClass}&searchtype=domestic&lg=English&refundtype=All&layovertime=&apa=&storelogs=false&directflights=false&defenceflight=false&studentflight=false&personalbooking=no',
@@ -280,7 +287,12 @@ def get_json(param_json, hashId):
                 'x-requested-with': 'XMLHttpRequest'
             }
 
-            response = requests.request("POST", url, headers=headers, data=payload)
+            # response = requests.request("POST", url, headers=headers, data=payload)
+
+            s = requests.Session()
+            # all cookies received will be stored in the session object
+
+            response = s.post(url, headers=headers, data=payload)
 
             json_data = json.loads(response.text)
 
@@ -296,10 +308,10 @@ def get_json(param_json, hashId):
                                   "Price_per_seat": {}, "Domain": {}}
 
                         # result.Price_per_seat
-                        result['Price_per_seat']['adult'] = details['flightfare']['adultbasefare']
-                        result['Price_per_seat']['child'] = details['flightfare']['childbasefare']
-                        result['Price_per_seat']['infant'] = details['flightfare']['infantbasefare']
-                        result['Domain'] = "travelsansaar"
+                        result['Price_per_seat']['adult'] = str(details['flightfare']['adultbasefare'])
+                        result['Price_per_seat']['child'] = str(details['flightfare']['childbasefare'])
+                        result['Price_per_seat']['infant'] = str(details['flightfare']['infantbasefare'])
+                        result['Domain'] = "makevoyage"
 
                         for main_data in details['flightlegs']:
 
@@ -340,7 +352,7 @@ def get_json(param_json, hashId):
                             except:
                                 result['Arrival_Time'] = ''
                             try:
-                                result['No_of_available_seats'] = main_data['numseatsavailable']
+                                result['No_of_available_seats'] = str(main_data['numseatsavailable'])
                             except:
                                 result['No_of_available_seats'] = ''
 
@@ -360,10 +372,10 @@ def get_json(param_json, hashId):
                                                "Price_per_seat": {}, "Domain": {}}
 
                         # result.Price_per_seat
-                        result['Price_per_seat']['adult'] = details['flightfare']['adultbasefare']
-                        result['Price_per_seat']['child'] = details['flightfare']['childbasefare']
-                        result['Price_per_seat']['infant'] = details['flightfare']['infantbasefare']
-                        result['Domain'] = "travelsansaar"
+                        result['Price_per_seat']['adult'] = str(details['flightfare']['adultbasefare'])
+                        result['Price_per_seat']['child'] = str(details['flightfare']['childbasefare'])
+                        result['Price_per_seat']['infant'] = str(details['flightfare']['infantbasefare'])
+                        result['Domain'] = "makevoyage"
 
                         for main_data in details['flightlegs']:
 
@@ -404,7 +416,7 @@ def get_json(param_json, hashId):
                             except:
                                 result['Arrival_Time'] = ''
                             try:
-                                result['No_of_available_seats'] = main_data['numseatsavailable']
+                                result['No_of_available_seats'] = str(main_data['numseatsavailable'])
                             except:
                                 result['No_of_available_seats'] = ''
 
@@ -419,17 +431,17 @@ def get_json(param_json, hashId):
 if __name__ == '__main__':
     # data = get_json("AMD", "DXB", "yes", "economy", "2022-09-03", "2022-09-23", 1, 1, 1, 12345)
     param_json = {
-        "origin": "AMD",
+        "origin": "DEL",
         "destination": "BOM",
         "isreturn": "no",
         "FlightClass": "economy",
-        "depart_date": "2022-09-02",  # "01-09-2022"
-        "ReturnDate": "2022-09-02",
+        "depart_date": "2022-09-03",  # "01-09-2022"
+        "ReturnDate": "2022-09-03",
         "adult": "1",
-        "child": "1",
-        "infant": "1",
+        "child": "0",
+        "infant": "0",
 
     }
 
-    data = (get_json(param_json,12345))
+    data = get_json(param_json,12345)
     print(json.dumps(data))
